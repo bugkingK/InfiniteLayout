@@ -19,7 +19,22 @@ open class InfiniteCollectionView: UICollectionView {
     
     @IBOutlet open weak var infiniteDelegate: InfiniteCollectionViewDelegate?
     
-    open private(set) var centeredIndexPath: IndexPath?
+    open private(set) var centeredIndexPath: IndexPath? {
+        didSet {
+            if let current = oldValue {
+                let section = current.section
+                let nextRow = current.row > numberOfItems(inSection: section) - 2 ? 0 : current.row + 1
+                let prevRow = current.row - 1 < 0 ? numberOfItems(inSection: section) - 1 : current.row - 1
+                nextIndexPath = .init(row: nextRow, section: section)
+                prevIndexPath = .init(row: prevRow, section: section)
+            } else {
+                nextIndexPath = nil
+                prevIndexPath = nil
+            }
+        }
+    }
+    open private(set) var nextIndexPath: IndexPath?
+    open private(set) var prevIndexPath: IndexPath?
     open var preferredCenteredIndexPath: IndexPath? = IndexPath(item: 0, section: 0)
     
     open var forwardDelegate: Bool { return true }
